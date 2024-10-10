@@ -1,0 +1,150 @@
+CUSTOMER CHURN DATA ANALYSIS
+
+#Importing Data
+```{r}
+#Importing Data
+data <- read.csv("C:/Users/pc/Desktop/BA/Personal/customer churn data.csv")
+head(data)
+```
+
+#Checking Data
+```{r}
+str(data)
+```
+
+#DATA CLEANING -> removing column 1 i.e., customerID
+```{r}
+#DATA CLEANING
+dat1 <- subset(data, select = -customerID)
+head(dat1)
+```
+
+#CHECKING DUPLICATE VALUES
+```{r}
+sum(duplicated(dat1))
+```
+#CHECKING THE NULL VALUES
+```{r}
+colSums(is.na(dat1) | dat1 == "")
+```
+
+#Checking Data Structure
+```{r}
+summary(data)
+```
+
+#mutate () modifies the column
+```{r}
+recoding <- data %>%
+  mutate(Partner = if_else(Partner == 0, "No", "Yes"))
+head(recoding)
+
+```
+
+
+```{r}
+
+library(ggplot2)
+library(gridExtra)
+
+# Create the histogram
+p1 <- ggplot(data = recoding, aes(x = MonthlyCharges)) +
+  geom_histogram(binwidth = 10, color = "white", fill = "#FFA07A") +
+  labs(title = "Distribution of Monthly Charges", 
+       x = "Monthly Charges ($)", 
+       y = "Frequency") +
+  scale_x_continuous(limits = c(0, 130), breaks = seq(0, 150, 20)) +
+  theme_minimal()
+
+# Display the plot
+grid.arrange(p1)
+
+```
+
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+
+p2 <- ggplot(recoding, aes(x = TotalCharges)) + 
+  geom_histogram(binwidth = 200, fill = "#69b3a2", color = "black") +
+  scale_x_continuous(breaks = seq(0, 9000, by = 1000)) +
+  labs(x = "Total Charges", y = "Frequency", 
+       title = "Histogram of Total Charges")
+
+grid.arrange(p2)
+```
+
+
+```{r}
+p3 <- ggplot(recoding, aes(x = tenure)) +
+  geom_histogram(binwidth = 5, color = "white", fill = "#FFA500") +
+  labs(title = "Distribution of Tenure", 
+       x = "Tenure (Months)", 
+       y = "Frequency") +
+  scale_x_continuous(limits = c(0, 80), breaks = seq(0, 80, 5)) +
+  theme_minimal()
+grid.arrange(p3)
+```
+
+
+```{r}
+p4 <- ggplot(data = recoding, aes(x = SeniorCitizen)) +
+  geom_histogram(binwidth = 1, color = "white", fill = "#FFA07A") +
+geom_text(aes(y = ..count.. -400, label = paste0(round(prop.table(..count..), 4)*100, "%")),
+          stat = "count")+labs(title = "Distribution Senior Citizen", 
+       x = "numAdminTickets", 
+       y = "Frequency") +
+  scale_x_continuous(limits = c(-1, 6), breaks = seq(0, 5, 1)) +
+  theme_minimal()
+grid.arrange(p4)
+```
+
+
+```{r}
+p5 <- ggplot(recoding, aes(x = Churn)) +
+  geom_bar()+ geom_text(aes(y = ..count.. -400, 
+                            label = paste0(round(prop.table(..count..),4)*100, '%')), 
+                        stat = 'count') + ggtitle("Churn")+
+  theme(plot.title = element_text(hjust = .5))
+p5
+
+
+
+```
+
+
+```{r}
+p6 <-  ggplot(recoding, aes(x = Contract, fill = Contract)) +
+geom_bar() +geom_text(aes(y = ..count.. -400, label = paste0(round(prop.table(..count..),
+                                                                   1)*100, "%")), stat = "count")+labs(title = "Distribution of Contract Type",
+x = "Contract Type",
+y = "Count") +
+scale_fill_brewer(palette = "Set2") +
+theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+# Bar graph of gender
+
+colors <- c("#0072B2", "#E69F00")
+grid.arrange(p6)
+
+```
+
+
+```{r}
+p7 <- ggplot(recoding, aes(x = PaymentMethod, fill = PaymentMethod)) +
+  geom_bar() +
+  labs(title = "Distribution of Payment Method", 
+       x = "Payment Method", 
+       y = "Count") +
+  scale_fill_brewer(palette = "Set2") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Arrange plots in a grid
+grid.arrange(p7)
+```
+
+
+
+
